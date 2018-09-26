@@ -1,0 +1,151 @@
+const int motorPin1  = 2; 
+const int motorPin2  = 4;
+const int motorPin3  = 7; 
+const int motorPin4  = 8;
+const int en1 = 5;
+const int en2 = 6;
+const int Obstacles_din1=12;
+const int Obstacles_din2=13;
+
+int lpin = 13;
+int userinput[3];
+int startbyte;
+int i;
+int led;
+int pos;
+int e = 0;
+int j=0;
+void setup()
+{
+  pinMode(lpin, OUTPUT);
+  pinMode(en1,OUTPUT);
+  pinMode(en2,OUTPUT);
+  pinMode(motorPin1, OUTPUT);
+  pinMode(motorPin2, OUTPUT);
+  pinMode(motorPin3, OUTPUT);
+  pinMode(motorPin4, OUTPUT);
+  pinMode(Obstacles_din1,INPUT);
+  pinMode(Obstacles_din2,INPUT);
+  Serial.begin(57600);
+}
+void loop()
+{
+  if (Serial.available()>2)
+  {
+    startbyte = Serial.read();
+    if (startbyte == 254)
+    {
+      for(i=0; i<2; i++)
+      {
+        userinput[i] = Serial.read();
+        //Serial.print(userinput[i]);
+      }
+      Serial.println(userinput[0]);
+      Serial.println(userinput[1]);      
+      Serial.println(" ");
+      led = userinput[0];
+      pos = userinput[1];
+      if (pos == 255) { led = 255; }
+      switch (led)
+      {
+        case 1:
+           digitalWrite(lpin, HIGH);
+           break;
+        case 2:
+           digitalWrite(motorPin1, HIGH);
+           digitalWrite(motorPin2, LOW);
+           digitalWrite(motorPin3, HIGH);
+           digitalWrite(motorPin4, LOW); 
+           analogWrite(en1, 255);
+           analogWrite(en2, 255);
+           break;
+        case 3:
+           digitalWrite(motorPin1, LOW);
+           digitalWrite(motorPin2, HIGH);
+           digitalWrite(motorPin3, LOW);
+           digitalWrite(motorPin4, HIGH); 
+           analogWrite(en1, 255);
+           analogWrite(en2, 255);
+           break;
+        case 4:
+           digitalWrite(motorPin1, LOW);
+           digitalWrite(motorPin2, HIGH);
+           digitalWrite(motorPin3, HIGH);
+           digitalWrite(motorPin4, LOW);
+           analogWrite(en1, 255);
+           analogWrite(en2, 255);
+           break;
+        case 5:
+           digitalWrite(motorPin1, HIGH);
+           digitalWrite(motorPin2, LOW);
+           digitalWrite(motorPin3, LOW);
+           digitalWrite(motorPin4, HIGH);
+           analogWrite(en1, 255);
+           analogWrite(en2, 255);
+           break;
+        case 6:
+           if(digitalRead(Obstacles_din2)==HIGH && digitalRead(Obstacles_din1)==LOW)
+            {
+              digitalWrite(motorPin1, HIGH);
+              digitalWrite(motorPin2, LOW);
+              digitalWrite(motorPin3, LOW);
+              digitalWrite(motorPin4, HIGH);
+              analogWrite(en1, 150);
+              analogWrite(en2, 150);
+            }
+            else if(digitalRead(Obstacles_din2)==LOW && digitalRead(Obstacles_din1)==HIGH)
+            {
+              digitalWrite(motorPin1, LOW);
+              digitalWrite(motorPin2, HIGH);
+              digitalWrite(motorPin3, HIGH);
+              digitalWrite(motorPin4, LOW);
+              analogWrite(en1, 150);
+              analogWrite(en2, 150);
+            }
+            else if(digitalRead(Obstacles_din2)==LOW && digitalRead(Obstacles_din1)==LOW)
+            {
+              digitalWrite(motorPin1, HIGH);
+              digitalWrite(motorPin2, LOW);
+              digitalWrite(motorPin3, HIGH);
+              digitalWrite(motorPin4, LOW); 
+              analogWrite(en1, 150);
+              analogWrite(en2, 150);
+            }
+            else
+            {
+              digitalWrite(motorPin1, LOW);
+              digitalWrite(motorPin2, HIGH);
+              digitalWrite(motorPin3, LOW);
+              digitalWrite(motorPin4, HIGH); 
+              analogWrite(en1, 150);
+              analogWrite(en2, 150);
+            }
+            delay(500);
+            
+        case 7:
+           digitalWrite(motorPin1, LOW);
+           digitalWrite(motorPin2, LOW);
+           digitalWrite(motorPin3, LOW);
+           digitalWrite(motorPin4, LOW);
+           analogWrite(en1, 0);
+           analogWrite(en2, 0);
+           delay(3000);    
+           
+        case 9:
+            if (pos == 150) {
+              e = int(millis);
+            }
+        default:
+           digitalWrite(lpin, LOW);
+           digitalWrite(motorPin1, LOW);
+           digitalWrite(motorPin2, LOW);
+           digitalWrite(motorPin3, LOW);
+           digitalWrite(motorPin4, LOW);
+           break;
+        
+         
+      }
+    }  
+  }
+  
+}

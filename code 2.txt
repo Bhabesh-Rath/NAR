@@ -1,0 +1,8 @@
+import serial
+usbport = '/dev/ttyACM0'
+ser = serial.Serial(usbport, 57600, timeout=1)
+
+def pow(a):
+    ser.write(chr(254))
+    ser.write(chr(a))
+    ser.write(chr(0))
